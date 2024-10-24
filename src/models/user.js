@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { required } = require("nodemon/lib/config");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -18,10 +19,20 @@ const userSchema = new mongoose.Schema(
       trim: true,
       required: true,
       unique: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("email id is not valid: " + value);
+        }
+      },
     },
     password: {
       type: String,
       required: true,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("Password   is not strong: " + value);
+        }
+      },
     },
     age: {
       type: Number,
@@ -39,7 +50,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       default:
         "https://smsdelhibmw.co.in/wp-content/uploads/2022/02/User-Profile-PNG.",
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error("URL  is not valid: " + value);
+        }
+      },
     },
+
     about: {
       type: String,
       default: "This is a default about of the user!",
